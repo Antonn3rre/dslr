@@ -12,6 +12,8 @@ def main():
 
     numeric_cols = ds.select_dtypes(include="number").columns.tolist()
 
+    #TODO: remove index?
+
     header = (
         f"{'Column name':<32} | {'Count':>10} | {'Mean':>12} | {'Std':>12} | "
         f"{'Min':>12} | {'25%':>12} | {'50%':>12} | {'75%':>12} | {'Max':>12}"

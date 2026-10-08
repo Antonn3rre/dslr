@@ -35,5 +35,3 @@ def ft_quartile_50(arr: np.array) -> float:
 
 def ft_quartile_75(arr: np.array) -> float:
     return arr[round(3 * (len(arr) + 1) / 4)]
-
-

@@ -1,10 +1,12 @@
 Phase 1:
-- Arrondi
+- ~Arrondi~
 - Quartile check nbe pair/impair
 - ~Affichage tableau~
+- fonction describe (voir sujet)
 
 Phase 2:
-- a voir
+- Histogram: verif fichier/data
+- ...
 
 Phase 3:
 - a voir
