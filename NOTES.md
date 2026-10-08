@@ -13,7 +13,15 @@ Part 1 - Data Analysis
 Partie 2 - Data Visualization
 
 1. Histogram
-
 --> Which Hogwarts course has a homogeneous score distribution between all four houses?'
  -> Afficher 1 histogramme par cours avec en superpose chaque maison
-- Group by 
+
+2. Scatter plot
+--> What are the two features that are similar?
+    subplots de scatter plot avec comparaison de chaque cours
+    ~70 graphs
+
+3. Pair plot
+
+    Une sorte de matrice de scatter plot
+    Au croisement d'un meme cours on montre son histogramme
