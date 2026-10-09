@@ -10,7 +10,7 @@ def main():
 
         --> Display score for each house in all courses
     """
-    print('ii')
+
     ds = pd.read_csv('datasets/dataset_train.csv')
     courses = ds.select_dtypes(include="number").columns.tolist()
     
