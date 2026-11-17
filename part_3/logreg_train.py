@@ -2,16 +2,34 @@ import pandas as pd
 import numpy as np
 import math
 
-def predict( line, data):
-    b = data[0]
-    w = data[1:]
+def train( X, y):
 
-    z = b + np.dot(w, line)
-    if z < -500:
-        z = -500
-    if z > 500:
-        z = 500
-    return 1 / (1 + math.exp(-z))
+    # m = nbe d'entree , n = nbe cours pour chaque entree
+    m, n = X.shape
+
+    b = 0.0
+    w = np.zeros(n)
+
+    learning_rate = 0.1
+    iterations = 1000
+
+    for i in range(iterations):
+        z = b + np.dot(X, w) 
+
+        z = np.clip(z, -500, 500)
+
+        y_pred = 1 / (1 + np.exp(-z))
+
+        error = y_pred - y
+        # moyenne des erreurs (derivee du biais)
+        db = (1 / m) * np.sum(error)
+        # derivee des 13 cours
+        dw = (1 / m)  * np.dot(X.T, error)
+
+        b = b - learning_rate * db
+        w = w - learning_rate * dw
+
+    return b, w
 
 def main():
 
@@ -32,7 +50,8 @@ def main():
     values = ds[courses].fillna(ds[courses].mean()).to_numpy()
 
     # Normalisation
-    n_values = (values - values.mean()) / values.std()
+    # axis=0 permet de calculer colonne par colonne et pas tout ensemble
+    n_values = (values - values.mean(axis=0)) / values.std(axis=0)
 
     houses = ["Ravenclaw", "Hufflepuff", "Slytherin", "Gryffindor"]
     y_raw = ds["Hogwarts House"].to_numpy()
@@ -47,8 +66,8 @@ def main():
                 b_norm, w_norm = train(n_values, y)
 
                 # Denormalisation
-                w = w_norm / std
-                b = b_norm - np.sum(w_orig * mean)
+                w = w_norm / values.std(axis=0)
+                b = b_norm - np.sum(w * values.mean(axis=0))
 
                 # Assemblage [b, w1, w2, ..., wn] et écriture au format CSV
                 line = np.concatenate(([b], w))

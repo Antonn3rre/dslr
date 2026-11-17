@@ -2,3 +2,4 @@ __pycache__/
 datasets/
 
 part_3/houses.csv
+part_3/trained.txt
