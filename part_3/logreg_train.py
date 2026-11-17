@@ -1,71 +1,62 @@
-import csv
+import pandas as pd
 import numpy as np
+import math
 
-# theta0 = ordonnee a l'origine
-# theta1 = pente
+def predict( line, data):
+    b = data[0]
+    w = data[1:]
 
-#TODO   check normalisation
-
-def gradient(m, n_mileage, n_price):
-
-    theta0 = 0
-    theta1 = 0
-
-    learning_rate = 0.1
-    iterations = 100
-
-
-    for _ in range(iterations):
-
-        estimated_price = theta0 + theta1 * n_mileage
-        tmp_theta0 = learning_rate * (1/m) * np.sum( estimated_price  - n_price)
-        tmp_theta1 = learning_rate * (1/m) * np.sum( (estimated_price - n_price ) * n_mileage)
-
-        theta0 -= tmp_theta0
-        theta1 -= tmp_theta1
-
-    return theta0, theta1
-    
-
-
+    z = b + np.dot(w, line)
+    if z < -500:
+        z = -500
+    if z > 500:
+        z = 500
+    return 1 / (1 + math.exp(-z))
 
 def main():
 
-    # Parse file
     try:
-        data = np.genfromtxt("data.csv", delimiter=",", skip_header=1)
-    except:
-        print("Error: can't retrieve data.csv values")
-        return
+        ds = pd.read_csv('../datasets/dataset_train.csv')
+    except Exception:
+        print("Error: cannot read dataset_train.csv")
+        exit()
 
-    mileage = data[:,0]
-    price = data[:,1]
-    m = len(mileage)
+    courses = ds.select_dtypes(include="number").columns.tolist()
 
-    # Normalize values
-    n_price = ( price - price.mean() ) / price.std()
-    n_mileage = (mileage - mileage.mean()) / mileage.std()
+    if "Index" in courses:
+        courses.remove("Index")
+    if "Hogwarts House" in courses:
+        courses.remove("Hogwarts House")
 
-    # Training (descente de gradient)
-    theta0, theta1 = gradient(m, n_mileage, n_price)
+    # Retrieve values + Fill empty ones with mean
+    values = ds[courses].fillna(ds[courses].mean()).to_numpy()
 
-    theta1_original = theta1 * price.std() / mileage.std()
+    # Normalisation
+    n_values = (values - values.mean()) / values.std()
 
-    # Re scale values
-    theta0_original = (
-        theta0 * price.std()
-        + price.mean()
-        - theta1_original * mileage.mean()
-    )
+    houses = ["Ravenclaw", "Hufflepuff", "Slytherin", "Gryffindor"]
+    y_raw = ds["Hogwarts House"].to_numpy()
 
-    with open("thetas.txt", "w") as f:
-        f.write(f"{str(theta0_original)}\n")
-        f.write(f"{str(theta1_original)}\n")
+    try:
+        with open("trained.txt", "w") as f:
+            for house in houses:
+                # Binarisation : 1 si eleve est dans cette maison, 0 sinon
+                y = np.where(y_raw == house, 1, 0)
 
-    print(theta0_original, theta1_original)
+                # Entrainement
+                b_norm, w_norm = train(n_values, y)
 
-    return
-    
+                # Denormalisation
+                w = w_norm / std
+                b = b_norm - np.sum(w_orig * mean)
+
+                # Assemblage [b, w1, w2, ..., wn] et écriture au format CSV
+                line = np.concatenate(([b], w))
+                f.write(",".join(map(str, line)) + "\n")
+    except OSError:
+        print("Cannot write trained.txt")
+        exit()
 
 if __name__ == '__main__':
     main()
+
